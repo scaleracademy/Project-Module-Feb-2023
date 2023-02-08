@@ -1,6 +1,6 @@
-package com.scaler.springtaskmgr;
+package com.scaler.springtaskmgr.controllers;
 
-import org.springframework.stereotype.Controller;
+import com.scaler.springtaskmgr.entities.Task;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
