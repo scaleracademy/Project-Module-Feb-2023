@@ -1,10 +1,14 @@
 package com.scaler.springtaskmgr.controllers;
 
+import com.scaler.springtaskmgr.dtos.ErrorResponse;
 import com.scaler.springtaskmgr.entities.Task;
 import com.scaler.springtaskmgr.services.TasksService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -22,8 +26,8 @@ public class TasksController {
      * @return List of tasks
      */
     @GetMapping("/tasks")
-    List<Task> getTasks() {
-        return tasksService.getTasks();
+    ResponseEntity<List<Task>> getTasks() {
+        return ResponseEntity.ok(tasksService.getTasks());
     }
 
     /**
@@ -42,9 +46,9 @@ public class TasksController {
      * @return Task object created
      */
     @PostMapping("/tasks")
-    Task createTask(@RequestBody Task task) {
-        var newTask = tasksService.createTask(task.getTitle(), task.getDescription(), task.getDueDate().toString());
-        return newTask;
+    ResponseEntity<Task> createTask(@RequestBody Task task) {
+        var newTask = tasksService.createTask(task.getTitle(), task.getDescription(), task.getDueDate());
+        return ResponseEntity.created(URI.create("/tasks/" + newTask.getId())).body(newTask);
     }
 
     /**
@@ -54,9 +58,8 @@ public class TasksController {
      * @return Task object
      */
     @GetMapping("/tasks/{id}")
-    Task getTask(@PathVariable("id") Integer id) {
-        return tasksService.getTaskById(id);
-        // TODO: BONUS: Return 404 if task not found
+    ResponseEntity<Task> getTask(@PathVariable("id") Integer id) {
+        return ResponseEntity.ok(tasksService.getTaskById(id));
     }
 
     /**
@@ -66,10 +69,8 @@ public class TasksController {
      * @return the deleted task
      */
     @DeleteMapping("/tasks/{id}")
-    Task deleteTask(@PathVariable("id") Integer id) {
-        return tasksService.deleteTask(id);
-        // TODO: BONUS: Return 404 if task not found
-
+    ResponseEntity<Task> deleteTask(@PathVariable("id") Integer id) {
+        return ResponseEntity.accepted().body(tasksService.deleteTask(id));
     }
 
     /**
@@ -80,13 +81,21 @@ public class TasksController {
      * @return the updated task
      */
     @PatchMapping("/tasks/{id}")
-    Task updateTask(@PathVariable("id") Integer id, @RequestBody Task task) {
+    ResponseEntity<Task> updateTask(@PathVariable("id") Integer id, @RequestBody Task task) {
         var updatedTask = tasksService.updateTask(
                 id,
                 task.getTitle(),
                 task.getDescription(),
-                task.getDueDate().toString()
+                task.getDueDate()
         );
-        return updatedTask;
+        return ResponseEntity.accepted().body(updatedTask);
+    }
+
+    @ExceptionHandler(TasksService.TaskNotFoundException.class)
+    ResponseEntity<ErrorResponse> handleErrors(TasksService.TaskNotFoundException e) {
+        return new ResponseEntity<>(
+                new ErrorResponse(e.getMessage()),
+                HttpStatus.NOT_FOUND
+        );
     }
 }
