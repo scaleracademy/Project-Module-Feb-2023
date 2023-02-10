@@ -24,3 +24,12 @@ Finish this project.
 - GET /tasks/{id}/notes - returns all notes for a task with the given id
 - POST /tasks/{id}/notes - creates a new note for a task with the given id
 - DELETE /tasks/{id}/notes/{noteId} - deletes a note with the given id for a task with the given id
+
+### Tests
+
+@DataJpaTest
+
+- TasksRepositoryTest.java
+- TasksServiceTest.java
+- NotesRepositoryTest.java
+- NotesServiceTest.java
