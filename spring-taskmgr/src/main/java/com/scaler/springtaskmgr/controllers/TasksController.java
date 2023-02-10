@@ -92,7 +92,7 @@ public class TasksController {
     }
 
     @ExceptionHandler(TasksService.TaskNotFoundException.class)
-    ResponseEntity<ErrorResponse> handleErrors(TasksService.TaskNotFoundException e) {
+    ResponseEntity<ErrorResponse> handleErrors(Exception e) {
         return new ResponseEntity<>(
                 new ErrorResponse(e.getMessage()),
                 HttpStatus.NOT_FOUND
