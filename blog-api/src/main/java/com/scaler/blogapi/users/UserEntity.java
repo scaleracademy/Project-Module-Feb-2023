@@ -2,16 +2,21 @@ package com.scaler.blogapi.users;
 
 import com.scaler.blogapi.articles.ArticleEntity;
 import com.scaler.blogapi.commons.BaseEntity;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity(name = "users")
+@Setter
+@Getter
 public class UserEntity extends BaseEntity {
 
     @Column(unique = true, nullable = false, length = 50)
     String username;
     String password; // TODO: Hash this
+    String email;
     String bio;
     String image;
 

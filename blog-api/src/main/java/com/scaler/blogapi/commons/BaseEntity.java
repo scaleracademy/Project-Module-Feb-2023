@@ -1,11 +1,13 @@
 package com.scaler.blogapi.commons;
 
+import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @MappedSuperclass
+@Getter
 public class BaseEntity {
 
     @Id
