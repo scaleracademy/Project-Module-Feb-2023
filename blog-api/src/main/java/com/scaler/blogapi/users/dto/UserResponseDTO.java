@@ -13,4 +13,5 @@ public class UserResponseDTO {
     String username;
     String bio;
     String image;
+    String token;
 }

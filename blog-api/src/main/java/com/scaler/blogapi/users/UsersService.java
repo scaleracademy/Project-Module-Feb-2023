@@ -1,5 +1,6 @@
 package com.scaler.blogapi.users;
 
+import com.scaler.blogapi.security.jwt.JWTService;
 import com.scaler.blogapi.users.dto.CreateUserDTO;
 import com.scaler.blogapi.users.dto.LoginUserDTO;
 import com.scaler.blogapi.users.dto.UserResponseDTO;
@@ -13,15 +14,13 @@ public class UsersService {
     private final UsersRepository usersRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+    private final JWTService jwtService;
 
-    public UsersService(
-            @Autowired UsersRepository usersRepository,
-            @Autowired ModelMapper modelMapper,
-            @Autowired PasswordEncoder passwordEncoder
-    ) {
+    public UsersService(UsersRepository usersRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, JWTService jwtService) {
         this.usersRepository = usersRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     public UserResponseDTO createUser(CreateUserDTO createUserDTO) {
@@ -31,6 +30,7 @@ public class UsersService {
         newUserEntity.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
         var savedUser = usersRepository.save(newUserEntity);
         var userResponseDTO = modelMapper.map(savedUser, UserResponseDTO.class);
+        userResponseDTO.setToken(jwtService.createJWT(savedUser.getId()));
 
         return userResponseDTO;
     }
@@ -46,6 +46,7 @@ public class UsersService {
             throw new IllegalArgumentException("Incorrect password");
         }
         var userResponseDTO = modelMapper.map(userEntity, UserResponseDTO.class);
+        userResponseDTO.setToken(jwtService.createJWT(userEntity.getId()));
 
         return userResponseDTO;
     }
