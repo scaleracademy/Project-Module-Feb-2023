@@ -1,12 +1,10 @@
 package com.scaler.blogapi.users;
 
 import com.scaler.blogapi.users.dto.CreateUserDTO;
+import com.scaler.blogapi.users.dto.LoginUserDTO;
 import com.scaler.blogapi.users.dto.UserResponseDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
@@ -25,5 +23,21 @@ public class UsersController {
         return ResponseEntity
                 .created(URI.create("/users/" + savedUser.getId()))
                 .body(savedUser);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserResponseDTO> loginUser(@RequestBody LoginUserDTO loginUserDTO) {
+        var savedUser = usersService.loginUser(loginUserDTO);
+        return ResponseEntity.ok(savedUser);
+    }
+
+    @ExceptionHandler(UsersService.UserNotFoundException.class)
+    public ResponseEntity<String> handleUserNotFoundException(UsersService.UserNotFoundException e) {
+        return ResponseEntity.notFound().build();
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 }
