@@ -30,8 +30,7 @@ public class JWTService {
     }
 
     public Integer getUserIdFromJWT(String jwt) {
-        var verifier = JWT.require(algorithm).build();
-        var decodedJWT = verifier.verify(jwt);
+        var decodedJWT = JWT.decode(jwt);
         var subject = decodedJWT.getSubject();
         return Integer.parseInt(subject);
     }
