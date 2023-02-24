@@ -17,7 +17,6 @@ public class JWTAuthenticationFilter extends AuthenticationFilter {
 
         setSuccessHandler((request, response, authentication) -> {
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
         });
     }
 
@@ -26,7 +25,11 @@ public class JWTAuthenticationFilter extends AuthenticationFilter {
         @Override
         public Authentication convert(HttpServletRequest request) {
             if (request.getHeader("Authorization") != null) {
-                String token = request.getHeader("Authorization").split(" ")[1];
+                var splitValue = request.getHeader("Authorization").split(" ");
+                if (splitValue.length != 2) {
+                    return null;
+                }
+                String token = splitValue[1];
 
                 return new JWTAuthentication(token);
             }
